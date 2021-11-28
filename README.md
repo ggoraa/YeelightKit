@@ -1,3 +1,3 @@
 # YeeLampa
 
-A description of this package.
+A Swift package to interact with Yeelight devices.
