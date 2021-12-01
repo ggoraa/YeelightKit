@@ -44,7 +44,9 @@ public class YeeLampa {
 			guard data == nil else {
 				print(String(data: data!, encoding: .utf8)!)
 				let parsedData = try! JSONDecoder().decode(DeviceListJsonModel.self, from: data!)
-				return completion(.success(parsedData.result.list))
+				return completion(.success(parsedData.result.list.map { device in
+					return device.toPDevice()
+				}))
 			}
 		}
 		requestTask.resume()
