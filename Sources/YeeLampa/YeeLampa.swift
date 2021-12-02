@@ -1,4 +1,5 @@
 import Foundation
+import Requester
 
 /// Main class of YeeLampa.
 public class YeeLampa {
@@ -27,22 +28,18 @@ public class YeeLampa {
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.httpBody = Data("clientId=\(self.clientId)&accessToken=\(self.accessToken)".utf8)
 		let requestTask = URLSession.shared.dataTask(with: request) { (data, response, error) in
-			print("in task")
 			guard error == nil else {
-				print("\(String(describing: error))")
 				return completion(.failure(RequestError.badToken))
 			}
 			
 			if let response = response as? HTTPURLResponse {
-				print(response.statusCode)
 				if (response.statusCode != 200) {
-					print("Bad status code received from server: \(response.statusCode)")
+					return completion(.failure(RequestError.unexpectedResponseCode(response.statusCode)))
 				}
 			}
 
 			// Convert HTTP Response Data to a simple String
 			guard data == nil else {
-				print(String(data: data!, encoding: .utf8)!)
 				let parsedData = try! JSONDecoder().decode(DeviceListJsonModel.self, from: data!)
 				return completion(.success(parsedData.result.list.map { device in
 					return device.toPDevice()
@@ -50,5 +47,36 @@ public class YeeLampa {
 			}
 		}
 		requestTask.resume()
+	}
+	
+	public func toggle(device: Device, on: Bool) {
+		var param = ""
+		if on {
+			param = "on"
+		} else {
+			param = "off"
+		}
+		self.sendRequestTo(device: device, arguments: ["method": "set_power", "params": [param]]) { result in
+			
+		}
+	}
+	
+	private func sendRequestTo(device: Device, arguments: [String: Any], _ completion: @escaping (Result<[Device], Error>) -> Void) {
+		do {
+			let payload = try JSONSerialization.data(withJSONObject: arguments, options: .prettyPrinted)
+			Requester.shared.sendDataRequest(
+				url: URL(string: "https://\(self.region.urlFormat).openapp.io.mi.com/openapp/device/rpc/\(device.deviceId)")!,
+				method: .post,
+				body: "clientId=\(self.clientId)&accessToken=\(self.accessToken)&data=\(String(data: payload, encoding: .utf8)!.replacingOccurrences(of: "\n", with: ""))",
+				headers: ["Content-Type": "application/x-www-form-urlencoded"],
+				completion: { (_: String) in
+					
+				}, failure: { error in
+					return completion(.failure(RequestError.badToken))
+				}
+			)
+		} catch {
+			print(error.localizedDescription)
+		}
 	}
 }
