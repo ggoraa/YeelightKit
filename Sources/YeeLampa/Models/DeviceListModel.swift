@@ -13,12 +13,12 @@ struct DeviceListJsonModel: Decodable {
 			let desc: String
 			let model: String
 			let mac: String
-			let longitude: Double
-			let latitude: Double
+			let longitude: String
+			let latitude: String
 			let isOnline: Bool
 			
 			func toPDevice() -> Device {
-				return Device(deviceId: self.did, name: self.name, description: self.desc, model: self.model.toDeviceModel(), macAddress: self.mac, longitude: self.longitude, latitude: self.latitude, isOnline: self.isOnline)
+				return Device(deviceId: self.did, name: self.name, description: self.desc, model: self.model.toDeviceModel(), macAddress: self.mac, longitude: Double(self.longitude)!, latitude: Double(self.latitude)!, isOnline: self.isOnline)
 			}
 		}
 		let list: [DeviceJsonModel]
