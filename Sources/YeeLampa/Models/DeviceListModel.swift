@@ -26,13 +26,13 @@ struct DeviceListJsonModel: Decodable {
 	let result: Results
 }
 
-public struct Device: Decodable {
-	let deviceId: String
-	let name: String
-	let description: String
-	let model: DeviceModel
-	let macAddress: String
-	let longitude: Double
-	let latitude: Double
-	let isOnline: Bool
+public struct Device: Decodable, Hashable {
+	public let deviceId: String
+	public let name: String
+	public let description: String
+	public let model: DeviceModel
+	public let macAddress: String
+	public let longitude: Double
+	public let latitude: Double
+	public let isOnline: Bool
 }
