@@ -5,7 +5,7 @@
 //  Created by Егор Яковенко on 30.11.2021.
 //
 
-public enum DeviceModel: Decodable, Hashable {
+public enum DeviceModel: Decodable, Hashable, Equatable {
 	case LightStrip(Int, String)
 	case DeskLamp(Int, String)
 	case BedsideLamp(Int, String)

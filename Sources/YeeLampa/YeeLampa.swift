@@ -13,11 +13,10 @@ public class YeeLampa {
 	/// - Parameters:
 	/// 	- accessToken: The token you acquired when logging in.
 	/// 	- region: The region we will connect to.
-	public init(accessToken: String, region: Region) throws {
+	public init(accessToken: String, region: Region) {
 		self.region = region
 		self.accessToken = accessToken
 		self.deviceListUrl = URL(string: "https://\(region.urlFormat).openapp.io.mi.com/openapp/user/device_list")!
-		print(self.deviceListUrl)
 	}
 	
 	/// Returns the device list.

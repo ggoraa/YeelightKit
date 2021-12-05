@@ -26,7 +26,7 @@ struct DeviceListJsonModel: Decodable {
 	let result: Results
 }
 
-public struct Device: Decodable, Hashable {
+public struct Device: Decodable, Hashable, Equatable {
 	public let deviceId: String
 	public let name: String
 	public let description: String
