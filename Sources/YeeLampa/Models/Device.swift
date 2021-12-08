@@ -5,7 +5,7 @@
 //  Created by Егор Яковенко on 30.11.2021.
 //
 
-public struct Device: Decodable, Hashable, Equatable {
+public struct Device: Hashable, Equatable {
 	public let deviceId: String
 	public let name: String
 	public let description: String

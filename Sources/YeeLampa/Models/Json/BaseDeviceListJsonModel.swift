@@ -5,9 +5,9 @@
 //  Created by Егор Яковенко on 06.12.2021.
 //
 
-struct BaseDeviceListJsonModel {
-	struct Results: Decodable {
-		struct DeviceJsonModel: Decodable {
+struct BaseDeviceListJsonModel: Codable {
+	struct Results: Codable {
+		struct DeviceJsonModel: Codable {
 			let did: String
 			let name: String
 			let desc: String
