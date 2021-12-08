@@ -39,7 +39,8 @@ public class YeeLampa {
 
 			// Convert HTTP Response Data to a simple String
 			guard data == nil else {
-				let parsedData = try! JSONDecoder().decode(DeviceListJsonModel.self, from: data!)
+				print(String(data: data!, encoding: .utf8))
+				let parsedData = try! JSONDecoder().decode(BaseDeviceListJsonModel.self, from: data!)
 				return completion(.success(parsedData.result.list.map { device in
 					return device.toPDevice()
 				}))

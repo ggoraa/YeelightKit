@@ -1,11 +1,11 @@
 //
-//  DeviceListModel.swift
+//  BaseDeviceListJsonModel.swift
 //  
 //
-//  Created by Егор Яковенко on 30.11.2021.
+//  Created by Егор Яковенко on 06.12.2021.
 //
 
-struct DeviceListJsonModel: Decodable {
+struct BaseDeviceListJsonModel {
 	struct Results: Decodable {
 		struct DeviceJsonModel: Decodable {
 			let did: String
@@ -26,13 +26,4 @@ struct DeviceListJsonModel: Decodable {
 	let result: Results
 }
 
-public struct Device: Decodable, Hashable, Equatable {
-	public let deviceId: String
-	public let name: String
-	public let description: String
-	public let model: DeviceModel
-	public let macAddress: String
-	public let longitude: Double
-	public let latitude: Double
-	public let isOnline: Bool
-}
+
