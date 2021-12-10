@@ -14,4 +14,5 @@ public struct Device: Hashable, Equatable {
 	public let longitude: Double
 	public let latitude: Double
 	public let isOnline: Bool
+	public let isOn: Bool
 }
