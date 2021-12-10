@@ -39,8 +39,7 @@ public class YeeLampa {
 
 			// Convert HTTP Response Data to a simple String
 			guard data == nil else {
-				print(String(data: data!, encoding: .utf8))
-				let parsedData = try! JSONDecoder().decode(BaseDeviceListJsonModel.self, from: data!)
+				let parsedData = try! JSONDecoder().decode(BaseJsonModel<DeviceListJsonModel>.self, from: data!)
 				return completion(.success(parsedData.result.list.map { device in
 					return device.toPDevice()
 				}))
@@ -56,16 +55,20 @@ public class YeeLampa {
 		} else {
 			param = "off"
 		}
-		self.sendRequestTo(device: device, arguments: ["method": "set_power", "params": [param]]) { result in
+		self.sendRequestTo(
+			device: device,
+			arguments: ["method": "set_power", "params": [param]],
+			url: URL(string: "https://\(self.region.urlFormat).openapp.io.mi.com/openapp/device/rpc/\(device.deviceId)")!
+		) { result in
 			
 		}
 	}
 	
-	private func sendRequestTo(device: Device, arguments: [String: Any], _ completion: @escaping (Result<[Device], Error>) -> Void) {
+	private func sendRequestTo(device: Device, arguments: [String: Any], url: URL, _ completion: @escaping (Result<[Device], Error>) -> Void) {
 		do {
 			let payload = try JSONSerialization.data(withJSONObject: arguments, options: .prettyPrinted)
 			Requester.shared.sendDataRequest(
-				url: URL(string: "https://\(self.region.urlFormat).openapp.io.mi.com/openapp/device/rpc/\(device.deviceId)")!,
+				url: url,
 				method: .post,
 				body: "clientId=\(self.clientId)&accessToken=\(self.accessToken)&data=\(String(data: payload, encoding: .utf8)!.replacingOccurrences(of: "\n", with: ""))",
 				headers: ["Content-Type": "application/x-www-form-urlencoded"],
