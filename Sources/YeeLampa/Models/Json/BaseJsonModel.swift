@@ -6,7 +6,7 @@
 //
 
 
-struct BaseJsonModel<T>: Codable {
+struct BaseJsonModel<T: Codable>: Codable {
 	let code: Int
 	let message: String
 	let result: T
