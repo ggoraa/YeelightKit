@@ -17,7 +17,7 @@ struct DeviceListJsonModel: Codable {
 		let isOnline: Bool
 		
 		func toPDevice() -> Device {
-			return Device(deviceId: self.did, name: self.name, description: self.desc, model: self.model.toDeviceModel(), macAddress: self.mac, longitude: Double(self.longitude)!, latitude: Double(self.latitude)!, isOnline: self.isOnline)
+			return Device(deviceId: self.did, name: self.name, model: self.model.toDeviceModel(), macAddress: self.mac, longitude: Double(self.longitude)!, latitude: Double(self.latitude)!, isOnline: self.isOnline, isOn: true)
 		}
 	}
 	let list: [DeviceJsonModel]
