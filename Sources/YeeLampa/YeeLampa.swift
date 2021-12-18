@@ -1,10 +1,10 @@
 import Foundation
-import Requester
+import Alamofire
 
 /// Main class of YeeLampa.
 public class YeeLampa {
-	private let clientId = 2882303761517308695
-	private let clientSecret = "OrwZHJ/drEXakH1LsfwwqQ=="
+	public static let clientId = 2882303761517308695
+	public static let clientSecret = "OrwZHJ/drEXakH1LsfwwqQ=="
 	private var region: Region
 	private var accessToken: String
 	private let deviceListUrl: URL
