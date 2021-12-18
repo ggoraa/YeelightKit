@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>yeelink.light.strip</key>
+	<array>
+		<string>power</string>
+		<string>bright</string>
+		<string>hue</string>
+		<string>sat</string>
+		<string>flowing</string>
+		<string>color_mode</string>
+		<string>rgb</string>
+		<string>delayoff</string>
+		<string>save_state</string>
+		<string>flow_params</string>
+		<string>lan_ctrl</string>
+		<string>init_power_opt</string>
+		<string>music_on</string>
+		<string>indicator_on</string>
+	</array>
+</dict>
+</plist>
