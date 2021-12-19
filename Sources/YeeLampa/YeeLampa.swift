@@ -95,7 +95,6 @@ public class YeeLampa {
 				],
 				headers: ["Content-Type": "application/x-www-form-urlencoded"]
 			).serializingData()
-			print(String(data: (try await task.value), encoding: .utf8))
 			return try await task.value
 		} catch {
 			throw RequestError.badToken
