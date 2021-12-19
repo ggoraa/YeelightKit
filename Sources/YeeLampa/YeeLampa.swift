@@ -70,10 +70,88 @@ public class YeeLampa {
 		}
 	}
 	
-	public func setPower(to on: Bool, for device: Device) async throws {
-		try await self.sendDeviceRequest(
-			url: URL(string: "https://\(self.region.urlFormat).openapp.io.mi.com/openapp/device/rpc/\(device.deviceId)")!,
-			arguments: ["method": "set_power", "params": [on ? "on" : "off"]]
+	/// Set a color temperature for a device that supports it.
+	/// - Parameters:
+	///   - temp: A target temperature.
+	///   - effect: An effect that wiil be used.
+	///   - duration: Time that it will take.
+	///   - device: A target device.
+	public func setColorTemperature(to temp: Int,  withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, forDevice device: Device) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "set_ct_abx", params: [temp, effect.rawValue, duration])
+	}
+	
+	/// Sets power state for a device.
+	/// - Parameters:
+	///   - on: The power state you want your device to change to.
+	///   - effect: An effect that wiil be used.
+	///   - duration: Time that it will take.
+	///   - device: A target device.
+	public func setPower(to on: Bool,  withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, forDevice device: Device) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "set_power", params: [(on ? "on" : "off"), effect.rawValue, duration])
+	}
+	
+	/// Toggles an LED.
+	/// - Parameter device: A target device.
+	public func togglePower(ofDevice device: Device) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "toggle", params: [])
+	}
+	
+	/// Sets an RGB color.
+	/// - Parameters:
+	///   - color: A RGB color you want to set.
+	///   - effect: An effect that wiil be used.
+	///   - duration: Time that it will take.
+	///   - device: A target device.
+	public func setRgbColor(
+		of color: (
+			red: Int,
+			green: Int,
+			blue: Int
+		),
+		withEffect effect: ChangeEffect = .smooth,
+		withDuration duration: Int = 500,
+		forDevice device: Device
+	) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "set_rgb", params: [
+			((color.red << 16) + (color.green << 8) + color.blue),
+			effect.rawValue,
+			duration]
+		)
+	}
+	
+	/// Sets an HSV color.
+	/// - Parameters:
+	///   - color: A color you want to set. `hue`'s bounds are 0 to 359(yea, it's strange, but this is how the API works),  `saturation` is from 0 to 100, and `brightness` is from 0 to 100. Note that if a `brightness` value is provided, then there will be 2 requests, one to set the `hue` and `saturation`, and one for `brightness`. Don't blame me on this design, this is how the API works! :D
+	///   - effect: An effect that wiil be used.
+	///   - duration: Time that it will take.
+	///   - device: A target device.
+	public func setHsvColor(
+		of color: (
+			hue: Int,
+			saturation: Int
+		),
+		withEffect effect: ChangeEffect = .smooth,
+		withDuration duration: Int = 500,
+		forDevice device: Device
+	) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "set_hsv", params: [color.hue, color.saturation, effect.rawValue, duration])
+	}
+	
+	
+	/// Sets the brightness of a device.
+	/// - Parameters:
+	///   - value: A brightness value you want to set. Allowed values are from 0 to 100.
+	///   - effect: An effect that wiil be used.
+	///   - duration: Time that it will take.
+	///   - device: A target device.
+	public func setBrightness(to value: Int, withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, forDevice device: Device) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "set_bright", params: [value, effect.rawValue, duration])
+	}
+	
+	private func modifyDeviceState(deviceId: String, method: String, params: Array<Any>) async throws {
+		let _ = try await self.sendDeviceRequest(
+			url: URL(string: "https://\(self.region.urlFormat).openapp.io.mi.com/openapp/device/rpc/\(deviceId)")!,
+			arguments: ["method": method, "params": params]
 		)
 	}
 	
