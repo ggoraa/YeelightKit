@@ -70,7 +70,7 @@ public class YeeLampa {
 		}
 	}
 	
-	/// Set a color temperature for a device that supports it.
+	/// Set a color temperature for a device that supports it. Only accepted when a device is in `on` state.
 	/// - Parameters:
 	///   - temp: A target temperature.
 	///   - effect: An effect that wiil be used.
@@ -80,23 +80,7 @@ public class YeeLampa {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "set_ct_abx", params: [temp, effect.rawValue, duration])
 	}
 	
-	/// Sets power state for a device.
-	/// - Parameters:
-	///   - on: The power state you want your device to change to.
-	///   - effect: An effect that wiil be used.
-	///   - duration: Time that it will take.
-	///   - device: A target device.
-	public func setPower(to on: Bool,  withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, for device: Device) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "set_power", params: [(on ? "on" : "off"), effect.rawValue, duration])
-	}
-	
-	/// Toggles an LED.
-	/// - Parameter device: A target device.
-	public func togglePower(ofDevice device: Device) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "toggle", params: [])
-	}
-	
-	/// Sets an RGB color.
+	/// Sets an RGB color. Only accepted when a device is in `on` state.
 	/// - Parameters:
 	///   - color: A RGB color you want to set.
 	///   - effect: An effect that wiil be used.
@@ -119,7 +103,7 @@ public class YeeLampa {
 		)
 	}
 	
-	/// Sets an HSV color.
+	/// Sets an HSV color. Only accepted when a device is in `on` state.
 	/// - Parameters:
 	///   - color: A color you want to set. `hue`'s bounds are 0 to 359(yea, it's strange, but this is how the API works),  `saturation` is from 0 to 100, and `brightness` is from 0 to 100. Note that if a `brightness` value is provided, then there will be 2 requests, one to set the `hue` and `saturation`, and one for `brightness`. Don't blame me on this design, this is how the API works! :D
 	///   - effect: An effect that wiil be used.
@@ -137,8 +121,7 @@ public class YeeLampa {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "set_hsv", params: [color.hue, color.saturation, effect.rawValue, duration])
 	}
 	
-	
-	/// Sets the brightness of a device.
+	/// Sets the brightness of a device. Only accepted when a device is in `on` state.
 	/// - Parameters:
 	///   - value: A brightness value you want to set. Allowed values are from 0 to 100.
 	///   - effect: An effect that wiil be used.
@@ -148,6 +131,54 @@ public class YeeLampa {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "set_bright", params: [value, effect.rawValue, duration])
 	}
 	
+	/// Sets power state for a device.
+	/// - Parameters:
+	///   - on: The power state you want your device to change to.
+	///   - effect: An effect that wiil be used.
+	///   - duration: Time that it will take.
+	///   - device: A target device.
+	public func setPower(
+		to on: Bool,
+		withEffect effect: ChangeEffect = .smooth,
+		withDuration duration: Int = 500,
+		withMode mode: TurnOnMode = .normal,
+		for device: Device
+	) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "set_power", params: [(on ? "on" : "off"), effect.rawValue, duration, mode.rawValue])
+	}
+	
+	/// Sets power state for a device.
+	/// - Parameters:
+	///   - state: The power state you want your device to change to.
+	///   - effect: An effect that wiil be used.
+	///   - duration: Time that it will take.
+	///   - device: A target device.
+	public func setPower(
+		to state: PowerState,
+		withEffect effect: ChangeEffect = .smooth,
+		withDuration duration: Int = 500,
+		withMode mode: TurnOnMode = .normal,
+		for device: Device
+	) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "set_power", params: [state.rawValue, effect.rawValue, duration, mode.rawValue])
+	}
+	
+	/// Toggles an LED.
+	/// - Parameter device: A target device.
+	public func togglePower(of device: Device) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "toggle", params: [])
+	}
+	
+	/// This method is used to save current state of smart LED in persistent memory. So if user powers off and then powers on the smart LED again (hard power reset), the smart LED will show last saved state.
+	/// - Parameter device: Target device.
+	public func saveCurrentStateAsDefault(for device: Device) async throws {
+		try await modifyDeviceState(deviceId: device.deviceId, method: "set_default", params: [])
+	}
+	
+	public func startColorFlow(of flow: ColorFlow, for device: Device) async throws {
+
+	}
+		
 	private func modifyDeviceState(deviceId: String, method: String, params: Array<Any>) async throws {
 		let _ = try await self.sendDeviceRequest(
 			url: URL(string: "https://\(self.region.urlFormat).openapp.io.mi.com/openapp/device/rpc/\(deviceId)")!,
