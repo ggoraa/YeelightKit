@@ -6,6 +6,6 @@
 //
 
 public enum ChangeEffect: String {
-	case sudden = "sudden"
-	case smooth = "smooth"
+	case sudden
+	case smooth
 }

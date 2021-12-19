@@ -6,6 +6,6 @@
 //
 
 public enum PowerState: String {
-	case on = "on"
-	case off = "off"
+	case on
+	case off
 }
