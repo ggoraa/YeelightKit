@@ -16,7 +16,7 @@ public class YeeLampa {
 	public init(accessToken: String, region: Region) {
 		self.region = region
 		self.accessToken = accessToken
-		self.deviceListUrl = URL(string: "https://\(region.urlFormat).openapp.io.mi.com/openapp/user/device_list")!
+		self.deviceListUrl = URL(string: "https://\(region.rawValue).openapp.io.mi.com/openapp/user/device_list")!
 	}
 	
 	private struct AuthResponse: Codable {
@@ -169,19 +169,62 @@ public class YeeLampa {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "toggle", params: [])
 	}
 	
+	public enum Action: Int {
+		case recoverToPreviousState = 0
+		case stayTheSame
+		case shutDown
+	}
+	
 	/// This method is used to save current state of smart LED in persistent memory. So if user powers off and then powers on the smart LED again (hard power reset), the smart LED will show last saved state.
 	/// - Parameter device: Target device.
 	public func saveCurrentStateAsDefault(for device: Device) async throws {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "set_default", params: [])
 	}
 	
-	public func startColorFlow(of flow: ColorFlow, for device: Device) async throws {
-
+	public func startColorFlow(of flow: [ColorFlowExpression], withCount count: Int, withAction action: Action, for device: Device) async throws {
+		var flowString: String = ""
+		for (index, element) in flow.enumerated() {
+			switch element {
+				case .color(let duration, let value, let brightness):
+					var computedBrightness: Int {
+						if brightness == nil {
+							return -1
+						} else {
+							return brightness!
+						}
+					}
+					
+					flowString.append("\(duration), 1, \(((value.red << 16) + (value.green << 8) + value.blue)), \(computedBrightness)")
+					if index != flow.count {
+						flowString.append(",")
+					}
+				case .colorTemperature(let duration, let value, let brightness):
+					var computedBrightness: Int {
+						if brightness == nil {
+							return -1
+						} else {
+							return brightness!
+						}
+					}
+					
+					flowString.append("\(duration), 2, \(((value.red << 16) + (value.green << 8) + value.blue)), \(computedBrightness)")
+					if index != flow.count {
+						flowString.append(",")
+					}
+				case .sleep(let duration, let value):
+					flowString.append("\(duration), 7, \(((value.red << 16) + (value.green << 8) + value.blue)), 0")
+					if index != flow.count {
+						flowString.append(",")
+					}
+			}
+		}
+		print(flowString)
+		try await modifyDeviceState(deviceId: device.deviceId, method: "start_cf", params: [count, action.rawValue, flowString])
 	}
-		
+	
 	private func modifyDeviceState(deviceId: String, method: String, params: Array<Any>) async throws {
 		let _ = try await self.sendDeviceRequest(
-			url: URL(string: "https://\(self.region.urlFormat).openapp.io.mi.com/openapp/device/rpc/\(deviceId)")!,
+			url: URL(string: "https://\(self.region.rawValue).openapp.io.mi.com/openapp/device/rpc/\(deviceId)")!,
 			arguments: ["method": method, "params": params]
 		)
 	}
