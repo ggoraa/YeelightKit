@@ -21,7 +21,7 @@ let package = Package(
 			name: "YeeLampa",
 			dependencies: ["Alamofire"],
 			resources: [
-				.copy("DeviceProps.plist")
+				.copy("Resources/DeviceProps.plist")
 			]
 		),
 //		.testTarget(
