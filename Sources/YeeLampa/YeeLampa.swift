@@ -76,7 +76,7 @@ public class YeeLampa {
 	///   - effect: An effect that wiil be used.
 	///   - duration: Time that it will take.
 	///   - device: A target device.
-	public func setColorTemperature(to temp: Int,  withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, forDevice device: Device) async throws {
+	public func setColorTemperature(to temp: Int,  withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, for device: Device) async throws {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "set_ct_abx", params: [temp, effect.rawValue, duration])
 	}
 	
@@ -86,7 +86,7 @@ public class YeeLampa {
 	///   - effect: An effect that wiil be used.
 	///   - duration: Time that it will take.
 	///   - device: A target device.
-	public func setPower(to on: Bool,  withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, forDevice device: Device) async throws {
+	public func setPower(to on: Bool,  withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, for device: Device) async throws {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "set_power", params: [(on ? "on" : "off"), effect.rawValue, duration])
 	}
 	
@@ -110,7 +110,7 @@ public class YeeLampa {
 		),
 		withEffect effect: ChangeEffect = .smooth,
 		withDuration duration: Int = 500,
-		forDevice device: Device
+		for device: Device
 	) async throws {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "set_rgb", params: [
 			((color.red << 16) + (color.green << 8) + color.blue),
@@ -132,7 +132,7 @@ public class YeeLampa {
 		),
 		withEffect effect: ChangeEffect = .smooth,
 		withDuration duration: Int = 500,
-		forDevice device: Device
+		for device: Device
 	) async throws {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "set_hsv", params: [color.hue, color.saturation, effect.rawValue, duration])
 	}
@@ -144,7 +144,7 @@ public class YeeLampa {
 	///   - effect: An effect that wiil be used.
 	///   - duration: Time that it will take.
 	///   - device: A target device.
-	public func setBrightness(to value: Int, withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, forDevice device: Device) async throws {
+	public func setBrightness(to value: Int, withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, for device: Device) async throws {
 		try await modifyDeviceState(deviceId: device.deviceId, method: "set_bright", params: [value, effect.rawValue, duration])
 	}
 	
