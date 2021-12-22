@@ -1,3 +1,3 @@
 # YeeLampa
 
-A Swift package to interact with Yeelight devices.
+A Swift package for type-safe interactions with Yeelight API.
