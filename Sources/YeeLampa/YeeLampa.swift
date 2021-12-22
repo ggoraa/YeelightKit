@@ -77,7 +77,7 @@ public class YeeLampa {
 	///   - duration: Time that it will take.
 	///   - device: A target device.
 	public func setColorTemperature(to temp: Int,  withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, for device: Device) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "set_ct_abx", params: [temp, effect.rawValue, duration])
+		let _ = try await runDeviceMethod(deviceId: device.deviceId, method: "set_ct_abx", params: [temp, effect.rawValue, duration])
 	}
 	
 	/// Sets an RGB color. Only accepted when a device is in `on` state.
@@ -96,7 +96,7 @@ public class YeeLampa {
 		withDuration duration: Int = 500,
 		for device: Device
 	) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "set_rgb", params: [
+		let _ = try await runDeviceMethod(deviceId: device.deviceId, method: "set_rgb", params: [
 			((color.red << 16) + (color.green << 8) + color.blue),
 			effect.rawValue,
 			duration]
@@ -118,7 +118,7 @@ public class YeeLampa {
 		withDuration duration: Int = 500,
 		for device: Device
 	) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "set_hsv", params: [color.hue, color.saturation, effect.rawValue, duration])
+		let _ = try await runDeviceMethod(deviceId: device.deviceId, method: "set_hsv", params: [color.hue, color.saturation, effect.rawValue, duration])
 	}
 	
 	/// Sets the brightness of a device. Only accepted when a device is in `on` state.
@@ -128,7 +128,7 @@ public class YeeLampa {
 	///   - duration: Time that it will take.
 	///   - device: A target device.
 	public func setBrightness(to value: Int, withEffect effect: ChangeEffect = .smooth, withDuration duration: Int = 500, for device: Device) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "set_bright", params: [value, effect.rawValue, duration])
+		let _ = try await runDeviceMethod(deviceId: device.deviceId, method: "set_bright", params: [value, effect.rawValue, duration])
 	}
 	
 	/// Sets power state for a device.
@@ -144,7 +144,7 @@ public class YeeLampa {
 		withMode mode: TurnOnMode = .normal,
 		for device: Device
 	) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "set_power", params: [(on ? "on" : "off"), effect.rawValue, duration, mode.rawValue])
+		let _ = try await runDeviceMethod(deviceId: device.deviceId, method: "set_power", params: [(on ? "on" : "off"), effect.rawValue, duration, mode.rawValue])
 	}
 	
 	/// Sets power state for a device.
@@ -160,13 +160,13 @@ public class YeeLampa {
 		withMode mode: TurnOnMode = .normal,
 		for device: Device
 	) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "set_power", params: [state.rawValue, effect.rawValue, duration, mode.rawValue])
+		let _ = try await runDeviceMethod(deviceId: device.deviceId, method: "set_power", params: [state.rawValue, effect.rawValue, duration, mode.rawValue])
 	}
 	
 	/// Toggles an LED.
 	/// - Parameter device: A target device.
 	public func togglePower(of device: Device) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "toggle", params: [])
+		let _ = try await runDeviceMethod(deviceId: device.deviceId, method: "toggle", params: [])
 	}
 	
 	public enum Action: Int {
@@ -178,7 +178,7 @@ public class YeeLampa {
 	/// This method is used to save current state of smart LED in persistent memory. So if user powers off and then powers on the smart LED again (hard power reset), the smart LED will show last saved state.
 	/// - Parameter device: Target device.
 	public func saveCurrentStateAsDefault(for device: Device) async throws {
-		try await modifyDeviceState(deviceId: device.deviceId, method: "set_default", params: [])
+		let _ = try await runDeviceMethod(deviceId: device.deviceId, method: "set_default", params: [])
 	}
 	
 	public func startColorFlow(of flow: [ColorFlowExpression], withCount count: Int, withAction action: Action, for device: Device) async throws {
@@ -218,15 +218,31 @@ public class YeeLampa {
 					}
 			}
 		}
-		print(flowString)
-		try await modifyDeviceState(deviceId: device.deviceId, method: "start_cf", params: [count, action.rawValue, flowString])
+
+		let _ = try await runDeviceMethod(deviceId: device.deviceId, method: "start_cf", params: [count, action.rawValue, flowString])
 	}
 	
-	private func modifyDeviceState(deviceId: String, method: String, params: Array<Any>) async throws {
-		let _ = try await self.sendDeviceRequest(
+	private func runDeviceMethod(deviceId: String, method: String, params: Array<Any>) async throws -> Data {
+		return try await self.sendDeviceRequest(
 			url: URL(string: "https://\(self.region.rawValue).openapp.io.mi.com/openapp/device/rpc/\(deviceId)")!,
 			arguments: ["method": method, "params": params]
 		)
+	}
+	
+	public func get(properties: [DeviceProperty], of device: Device) async throws -> [String] {
+		var requestProps: [String] = []
+		
+		for prop in properties {
+			requestProps.append(prop.rawValue)
+		}
+		
+		let response = try await runDeviceMethod(deviceId: device.deviceId, method: "get_prop", params: requestProps)
+		return try JSONDecoder().decode(BaseJsonModel<[String]>.self, from: response).result
+	}
+	
+	public func get(property: DeviceProperty, of device: Device) async throws -> String {
+		let response = try await runDeviceMethod(deviceId: device.deviceId, method: "get_prop", params: [property.rawValue])
+		return try JSONDecoder().decode(BaseJsonModel<[String]>.self, from: response).result[0]
 	}
 	
 	/// An internal function to pass requests to devices.
