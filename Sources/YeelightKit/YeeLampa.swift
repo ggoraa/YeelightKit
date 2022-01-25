@@ -1,15 +1,15 @@
 import Foundation
 import Alamofire
 
-/// Main class of YeeLampa.
-public class YeeLampa {
+/// Main class of YeelightKit.
+public class YeelightKit {
 	public static let clientId = 2882303761517308695
 	public static let clientSecret = "OrwZHJ/drEXakH1LsfwwqQ=="
 	private var region: Region
 	private var accessToken: String
 	private let deviceListUrl: URL
 	
-	/// Creates a YeeLampa instance with provided credentials.
+	/// Creates a YeelightKit instance with provided credentials.
 	/// - Parameters:
 	/// 	- accessToken: The token you acquired when logging in.
 	/// 	- region: The region we will connect to.
@@ -32,8 +32,8 @@ public class YeeLampa {
 			url,
 			method: .get,
 			parameters: [
-				"client_id": YeeLampa.clientId,
-				"client_secret": YeeLampa.clientSecret,
+				"client_id": YeelightKit.clientId,
+				"client_secret": YeelightKit.clientSecret,
 				"grant_type": "authorization_code",
 				"redirect_uri": "http://www.mi.com",
 				"code": grant
@@ -57,10 +57,10 @@ public class YeeLampa {
 		var request = URLRequest(url: self.deviceListUrl)
 		request.httpMethod = "POST"
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-		request.httpBody = Data("clientId=\(YeeLampa.clientId)&accessToken=\(self.accessToken)".utf8)
+		request.httpBody = Data("clientId=\(YeelightKit.clientId)&accessToken=\(self.accessToken)".utf8)
 		
 		let task = AF.request(self.deviceListUrl, method: .post, parameters: [
-			"clientId": YeeLampa.clientId,
+			"clientId": YeelightKit.clientId,
 			"accessToken": self.accessToken
 		], headers: [
 			"Content-Type": "application/x-www-form-urlencoded"
@@ -257,7 +257,7 @@ public class YeeLampa {
 				url,
 				method: .post,
 				parameters: [
-					"clientId": YeeLampa.clientId,
+					"clientId": YeelightKit.clientId,
 					"accessToken": self.accessToken,
 					"data": String(data: payload, encoding: .utf8)!.replacingOccurrences(of: "\n", with: "")
 				],

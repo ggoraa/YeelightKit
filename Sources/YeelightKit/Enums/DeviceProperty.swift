@@ -5,7 +5,7 @@
 //  Created by Егор Яковенко on 22.12.2021.
 //
 
-/// An enum for representing device properties. Used in ``YeeLampa/YeeLampa/get(properties:of:)`` function, to get individual properties of a device.
+/// An enum for representing device properties. Used in ``YeelightKit/YeelightKit/get(properties:of:)`` function, to get individual properties of a device.
 public enum DeviceProperty: String {
 	case isOn = "power"
 	case brightness = "bright"
