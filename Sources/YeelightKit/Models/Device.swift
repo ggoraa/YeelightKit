@@ -12,14 +12,14 @@ open class Device: Identifiable {
 		return lhs.deviceId == rhs.deviceId
 	}
 	
-	let deviceId: String
-	let name: String
-	let model: DeviceModel
-	let macAddress: String
-	let longitude: Double
-	let latitude: Double
-	let isOnline: Bool
-	let isOn: Bool
+	public let deviceId: String
+	public let name: String
+	public let model: DeviceModel
+	public let macAddress: String
+	public let longitude: Double
+	public let latitude: Double
+	public let isOnline: Bool
+	public let isOn: Bool
 	
 	init(deviceId: String, name: String, model: DeviceModel, macAddress: String, longitude: Double, latitude: Double, isOnline: Bool, isOn: Bool) {
 		self.deviceId = deviceId

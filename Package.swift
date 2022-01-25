@@ -3,22 +3,22 @@
 import PackageDescription
 
 let package = Package(
-	name: "YeeLampa",
+	name: "YeelightKit",
 	platforms: [
 		.iOS(.v13),
-		.macOS(.v10_15)
+		.macOS(.v12)
 	],
 	products: [
 		.library(
-			name: "YeeLampa",
-			targets: ["YeeLampa"]),
+			name: "YeelightKit",
+			targets: ["YeelightKit"]),
 	],
 	dependencies: [
 		.package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.5.0"))
 	],
 	targets: [
 		.target(
-			name: "YeeLampa",
+			name: "YeelightKit",
 			dependencies: ["Alamofire"],
 			resources: [
 				.copy("Resources/DeviceProps.plist")
